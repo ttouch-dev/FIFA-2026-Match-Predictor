@@ -36,8 +36,10 @@ function validMatchQuery(extra = {}) {
 
 export async function getTodayMatches(req, res) {
   try {
-    const start = dayjs().startOf("day").toDate();
-    const end = dayjs().endOf("day").toDate();
+    const now = new Date();
+
+    const start = dayjs(now).subtract(12, "hour").startOf("day").toDate();
+    const end = dayjs(now).add(12, "hour").endOf("day").toDate();
 
     const matches = await Match.find(
       validMatchQuery({
