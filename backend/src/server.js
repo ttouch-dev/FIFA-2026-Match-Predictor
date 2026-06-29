@@ -25,7 +25,6 @@ const app = express();
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "https://fifa-prediction-sooty-kappa.vercel.app",
-  "https://fifa-prediction-2026-h9gp3j2ru-tt-ouch-dev-s-projects.vercel.app",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://172.20.160.1:5173",

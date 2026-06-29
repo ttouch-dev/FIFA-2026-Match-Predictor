@@ -7,7 +7,7 @@ import {
   getAiStatsMatches,
   getMatchById,
   createUserPrediction,
-  regenerateMatchPrediction
+  regenerateMatchPrediction,
 } from "../controllers/match.controller.js";
 
 const router = express.Router();
