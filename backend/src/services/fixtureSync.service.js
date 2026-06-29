@@ -4,54 +4,18 @@ import { generatePrediction } from "./prediction.service.js";
 const API_BASE = "https://api.football-data.org/v4";
 
 const flagMap = {
-  MEX: "🇲🇽",
-  RSA: "🇿🇦",
-  KOR: "🇰🇷",
-  CZE: "🇨🇿",
-  CAN: "🇨🇦",
-  BIH: "🇧🇦",
-  QAT: "🇶🇦",
-  SUI: "🇨🇭",
-  BRA: "🇧🇷",
-  MAR: "🇲🇦",
-  HAI: "🇭🇹",
-  SCO: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-  USA: "🇺🇸",
-  PAR: "🇵🇾",
-  AUS: "🇦🇺",
-  TUR: "🇹🇷",
-  GER: "🇩🇪",
-  CUW: "🇨🇼",
-  CIV: "🇨🇮",
-  ECU: "🇪🇨",
-  NED: "🇳🇱",
-  JPN: "🇯🇵",
-  SWE: "🇸🇪",
-  TUN: "🇹🇳",
-  BEL: "🇧🇪",
-  EGY: "🇪🇬",
-  IRN: "🇮🇷",
-  NZL: "🇳🇿",
-  ESP: "🇪🇸",
-  CPV: "🇨🇻",
-  KSA: "🇸🇦",
-  URU: "🇺🇾",
-  FRA: "🇫🇷",
-  SEN: "🇸🇳",
-  IRQ: "🇮🇶",
-  NOR: "🇳🇴",
-  ARG: "🇦🇷",
-  ALG: "🇩🇿",
-  AUT: "🇦🇹",
-  JOR: "🇯🇴",
-  POR: "🇵🇹",
-  COD: "🇨🇩",
-  UZB: "🇺🇿",
-  COL: "🇨🇴",
-  ENG: "🏴",
-  CRO: "🇭🇷",
-  GHA: "🇬🇭",
-  PAN: "🇵🇦",
+  MEX: "🇲🇽", RSA: "🇿🇦", KOR: "🇰🇷", CZE: "🇨🇿",
+  CAN: "🇨🇦", BIH: "🇧🇦", QAT: "🇶🇦", SUI: "🇨🇭",
+  BRA: "🇧🇷", MAR: "🇲🇦", HAI: "🇭🇹", SCO: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  USA: "🇺🇸", PAR: "🇵🇾", AUS: "🇦🇺", TUR: "🇹🇷",
+  GER: "🇩🇪", CUW: "🇨🇼", CIV: "🇨🇮", ECU: "🇪🇨",
+  NED: "🇳🇱", JPN: "🇯🇵", SWE: "🇸🇪", TUN: "🇹🇳",
+  BEL: "🇧🇪", EGY: "🇪🇬", IRN: "🇮🇷", NZL: "🇳🇿",
+  ESP: "🇪🇸", CPV: "🇨🇻", KSA: "🇸🇦", URU: "🇺🇾",
+  FRA: "🇫🇷", SEN: "🇸🇳", IRQ: "🇮🇶", NOR: "🇳🇴",
+  ARG: "🇦🇷", ALG: "🇩🇿", AUT: "🇦🇹", JOR: "🇯🇴",
+  POR: "🇵🇹", COD: "🇨🇩", UZB: "🇺🇿", COL: "🇨🇴",
+  ENG: "🏴", CRO: "🇭🇷", GHA: "🇬🇭", PAN: "🇵🇦"
 };
 
 function clamp(value, min, max) {
@@ -59,9 +23,7 @@ function clamp(value, min, max) {
 }
 
 function apiHeaders() {
-  return {
-    "X-Auth-Token": process.env.FOOTBALL_DATA_API_KEY,
-  };
+  return { "X-Auth-Token": process.env.FOOTBALL_DATA_API_KEY };
 }
 
 function mapStatus(status) {
@@ -84,9 +46,7 @@ function stageName(stage) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, {
-    headers: apiHeaders(),
-  });
+  const res = await fetch(url, { headers: apiHeaders() });
 
   if (!res.ok) {
     const text = await res.text();
@@ -108,7 +68,7 @@ function defaultStats() {
     formScore: 50,
     attackScore: 50,
     defenseScore: 50,
-    rankScore: 50,
+    rankScore: 50
   };
 }
 
@@ -120,14 +80,10 @@ function buildTeam(team, oldTeam = null) {
     id: team?.id || oldTeam?.id || null,
     name: team?.name || oldTeam?.name || "TBD",
     shortName: team?.shortName || oldTeam?.shortName || "",
-    short:
-      team?.tla ||
-      oldTeam?.short ||
-      team?.shortName?.slice(0, 3)?.toUpperCase() ||
-      "",
+    short: team?.tla || oldTeam?.short || team?.shortName?.slice(0, 3)?.toUpperCase() || "",
     tla: team?.tla || oldTeam?.tla || "",
     crest: team?.crest || oldTeam?.crest || "",
-    flag: flagMap[team?.tla] || oldTeam?.flag || "",
+    flag: flagMap[team?.tla] || oldTeam?.flag || ""
   };
 }
 
@@ -142,16 +98,13 @@ function buildFixture(item, oldMatch = null) {
     country: oldMatch?.country || "",
     kickoff: item.utcDate ? new Date(item.utcDate) : oldMatch?.kickoff,
     status: mapStatus(item.status),
-
     home: buildTeam(item.homeTeam, oldMatch?.home),
     away: buildTeam(item.awayTeam, oldMatch?.away),
-
     score: {
       home: item.score?.fullTime?.home ?? oldMatch?.score?.home ?? null,
-      away: item.score?.fullTime?.away ?? oldMatch?.score?.away ?? null,
+      away: item.score?.fullTime?.away ?? oldMatch?.score?.away ?? null
     },
-
-    isPublished: true,
+    isPublished: true
   };
 }
 
@@ -163,25 +116,11 @@ function calculateTeamStats(matches) {
     if (!match.home?.tla || !match.away?.tla) continue;
 
     if (!teamMap.has(match.home.tla)) {
-      teamMap.set(match.home.tla, {
-        played: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goalsFor: 0,
-        goalsAgainst: 0,
-      });
+      teamMap.set(match.home.tla, { played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 });
     }
 
     if (!teamMap.has(match.away.tla)) {
-      teamMap.set(match.away.tla, {
-        played: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goalsFor: 0,
-        goalsAgainst: 0,
-      });
+      teamMap.set(match.away.tla, { played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 });
     }
 
     const homeStats = teamMap.get(match.home.tla);
@@ -195,7 +134,6 @@ function calculateTeamStats(matches) {
 
     homeStats.goalsFor += homeScore;
     homeStats.goalsAgainst += awayScore;
-
     awayStats.goalsFor += awayScore;
     awayStats.goalsAgainst += homeScore;
 
@@ -218,16 +156,11 @@ function applyStats(team, teamStats) {
   if (!team?.tla) return team;
 
   const stats = teamStats.get(team.tla);
-
   if (!stats || stats.played === 0) return team;
 
   const goalsForAvg = stats.goalsFor / stats.played;
   const goalsAgainstAvg = stats.goalsAgainst / stats.played;
-
-  const formScore = Math.round(
-    ((stats.wins * 3 + stats.draws) / (stats.played * 3)) * 100
-  );
-
+  const formScore = Math.round(((stats.wins * 3 + stats.draws) / (stats.played * 3)) * 100);
   const attackScore = Math.round(clamp(goalsForAvg * 30, 30, 100));
   const defenseScore = Math.round(clamp(100 - goalsAgainstAvg * 25, 20, 100));
 
@@ -242,7 +175,7 @@ function applyStats(team, teamStats) {
     goalsAgainstAvg: Number(goalsAgainstAvg.toFixed(2)),
     formScore,
     attackScore,
-    defenseScore,
+    defenseScore
   };
 }
 
@@ -254,9 +187,7 @@ async function saveApiMatches(apiMatches = []) {
   for (const item of apiMatches) {
     const externalId = String(item.id);
     const oldMatch = await Match.findOne({ externalId }).lean();
-    const fixture = buildFixture(item, oldMatch);
-
-    builtMatches.push(fixture);
+    builtMatches.push(buildFixture(item, oldMatch));
   }
 
   const teamStats = calculateTeamStats(builtMatches);
@@ -273,18 +204,8 @@ async function saveApiMatches(apiMatches = []) {
 
       await Match.findOneAndUpdate(
         { externalId: fixture.externalId },
-        {
-          $set: {
-            ...fixture,
-            prediction,
-            lastSyncedAt: new Date(),
-          },
-        },
-        {
-          upsert: true,
-          new: true,
-          runValidators: true,
-        }
+        { $set: { ...fixture, prediction } },
+        { upsert: true, new: true, runValidators: true }
       );
 
       synced++;
@@ -308,10 +229,7 @@ async function saveApiMatches(apiMatches = []) {
     }
   }
 
-  return {
-    synced,
-    failed,
-  };
+  return { synced, failed };
 }
 
 export async function syncFixtures() {
@@ -321,7 +239,6 @@ export async function syncFixtures() {
 
   const url = `${API_BASE}/competitions/WC/matches`;
   const data = await fetchJson(url);
-
   const result = await saveApiMatches(data.matches || []);
 
   return {
@@ -329,7 +246,6 @@ export async function syncFixtures() {
     source: url,
     totalFromApi: data.resultSet?.count || data.matches?.length || 0,
     playedFromApi: data.resultSet?.played || 0,
-    syncedAt: new Date(),
-    message: "World Cup matches synced and AI predictions regenerated.",
+    message: "World Cup matches synced and AI predictions regenerated."
   };
 }

@@ -75,7 +75,7 @@ app.get("/api/health", (req, res) => {
     ok: true,
     message: "Server is healthy",
     aiServiceUrl: process.env.AI_SERVICE_URL || null,
-    syncStatus: "Initial sync on startup + cron every 6 hours",
+    syncStatus: "Initial sync on startup + cron every 15 minutes",
   });
 });
 
@@ -146,7 +146,7 @@ app.listen(port, "0.0.0.0", async () => {
     if (!fixtureSyncStarted) {
       startDailyFixtureSync();
       fixtureSyncStarted = true;
-      console.log("⏰ Auto sync scheduled every 6 hours");
+      console.log("⏰ Auto sync scheduled every 15 minutes");
     }
   } catch (err) {
     console.error("❌ MongoDB connection failed");
