@@ -1,6 +1,14 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezonePlugin from "dayjs/plugin/timezone.js";
+
 import Match from "../models/Match.js";
 import { generatePrediction } from "../services/prediction.service.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezonePlugin);
+
+const BD_TIMEZONE = "Asia/Dhaka";
 
 function success(res, data, message = "Success") {
   return res.status(200).json({ success: true, message, data });
@@ -36,10 +44,11 @@ function validMatchQuery(extra = {}) {
 
 export async function getTodayMatches(req, res) {
   try {
-    const now = new Date();
+    const start = dayjs().tz(BD_TIMEZONE).startOf("day").utc().toDate();
+    const end = dayjs().tz(BD_TIMEZONE).endOf("day").utc().toDate();
 
-    const start = dayjs(now).subtract(12, "hour").startOf("day").toDate();
-    const end = dayjs(now).add(12, "hour").endOf("day").toDate();
+    console.log("BD Today start UTC:", start);
+    console.log("BD Today end UTC:", end);
 
     const matches = await Match.find(
       validMatchQuery({
@@ -57,9 +66,11 @@ export async function getTodayMatches(req, res) {
 
 export async function getUpcomingMatches(req, res) {
   try {
+    const now = new Date();
+
     const matches = await Match.find(
       validMatchQuery({
-        kickoff: { $gte: new Date() },
+        kickoff: { $gte: now },
         status: { $ne: "finished" },
       })
     )
